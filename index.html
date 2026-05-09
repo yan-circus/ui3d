@@ -49,6 +49,16 @@
       white-space: nowrap;
     }
 
+    #version {
+      position: fixed;
+      top: 22px;
+      right: 20px;
+      color: rgba(255,255,255,0.75);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      pointer-events: none;
+    }
+
     #hint {
       position: fixed;
       bottom: 26px;
@@ -103,6 +113,7 @@
   <div id="title">Choisir une activité</div>
   <div id="hint">Glisser pour tourner · Cliquer pour explorer</div>
   <div id="toast"></div>
+  <div id="version">v0.5.1</div>
 
   <script type="importmap">
   {"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}
@@ -171,6 +182,7 @@
         name: 'Français',
         color: 0xff4466, emissive: 0x3a0a14,
         makeGeo: () => new THREE.SphereGeometry(0.72, 32, 32),
+        texturePath: 'assets/sphere_french_map.jpg',
         games: ['Grammaire', 'Conjugaison', 'Lecture', 'Dictée']
       },
       {
@@ -186,6 +198,8 @@
         games: ['Capitales', 'Drapeaux', 'Continents', 'Reliefs']
       }
     ];
+
+    const texLoader = new THREE.TextureLoader();
 
     const HOME_R = 3.5;
     const GAME_R = 2.8;
@@ -234,6 +248,14 @@
         new THREE.MeshBasicMaterial({ color: act.color, transparent: true, opacity: 0.055, side: THREE.BackSide })
       ));
 
+      if (act.texturePath) {
+        texLoader.load(act.texturePath, tex => {
+          mesh.material.map = tex;
+          mesh.material.color.set(0xffffff);
+          mesh.material.needsUpdate = true;
+        });
+      }
+
       homeGroup.add(mesh);
       return mesh;
     });
@@ -252,6 +274,13 @@
       // Objet central (plus grand)
       centerMesh = new THREE.Mesh(act.makeGeo(), makeMat(act.color, act.emissive));
       centerMesh.scale.setScalar(1.5);
+      if (act.texturePath) {
+        texLoader.load(act.texturePath, tex => {
+          centerMesh.material.map = tex;
+          centerMesh.material.color.set(0xffffff);
+          centerMesh.material.needsUpdate = true;
+        });
+      }
       actGroup.add(centerMesh);
 
       addOrbitRing(GAME_R, actGroup);
