@@ -33,6 +33,12 @@ export const THEME = {
   gridPadRight: 24,
 };
 
+// Taille de référence des cartes niveaux — calculée pour 4 cols × 4 rangées
+const _sepY  = THEME.padTop + THEME.titleSz + THEME.sepMargin;
+const _gridY = _sepY + 1 + THEME.gridMargin;
+export const CARD_W = (THEME.panelW - THEME.padH * 2 - 3 * THEME.gap) / 4;
+export const CARD_H = (THEME.panelH - _gridY - THEME.padBot - 3 * THEME.gap) / 4;
+
 export function applyThemeVars() {
   const s = document.documentElement.style;
   s.setProperty('--panel-w',        THEME.panelW       + 'px');
@@ -56,4 +62,6 @@ export function applyThemeVars() {
   s.setProperty('--card-min-h',     THEME.cardMinH     + 'px');
   s.setProperty('--grid-pad-top',   THEME.gridPadTop   + 'px');
   s.setProperty('--grid-pad-right', THEME.gridPadRight + 'px');
+  s.setProperty('--card-w',         CARD_W.toFixed(2)  + 'px');
+  s.setProperty('--card-h',         CARD_H.toFixed(2)  + 'px');
 }

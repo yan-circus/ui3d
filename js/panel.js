@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { THEME, TUNE } from './theme.js';
+import { THEME, TUNE, CARD_W, CARD_H } from './theme.js';
 
 export function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -55,7 +55,6 @@ export function buildFamilyPanel(family, actColor) {
   const sepY  = T.padTop + T.titleSz + T.sepMargin;
   const gridY = sepY + 1 + T.gridMargin;
   const n     = family.levels.length;
-  const cols  = n <= 4 ? 2 : 4;
 
   return {
     toTexture() {
@@ -93,18 +92,12 @@ export function buildFamilyPanel(family, actColor) {
       ctx.lineTo((T.panelW - T.padH) * K, sepY * K);
       ctx.stroke();
 
-      const rows   = Math.ceil(n / cols);
-      const gridW  = T.panelW - T.padH * 2;
-      const gridHt = T.panelH - gridY - T.padBot;
-      const cw     = (gridW - (cols - 1) * T.gap) / cols;
-      const ch     = (gridHt - (rows - 1) * T.gap) / rows;
-
       family.levels.forEach((lvl, i) => {
-        const col = i % cols;
-        const row = Math.floor(i / cols);
-        const cx  = (T.padH + col * (cw + T.gap)) * K;
-        const cy  = (gridY  + row * (ch + T.gap)) * K;
-        const cws = cw * K, chs = ch * K;
+        const col = i % 4;
+        const row = Math.floor(i / 4);
+        const cx  = (T.padH + col * (CARD_W + T.gap)) * K;
+        const cy  = (gridY  + row * (CARD_H + T.gap)) * K;
+        const cws = CARD_W * K, chs = CARD_H * K;
 
         ctx.fillStyle = lvl.locked ? colors.cardBgLocked : colors.cardBgUnlocked;
         roundRect(ctx, cx, cy, cws, chs, T.cardRadius * K);
@@ -156,7 +149,7 @@ export function buildFamilyPanel(family, actColor) {
 
       const grid = document.createElement('div');
       grid.className = 'family-panel-grid';
-      grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+      grid.style.gridTemplateColumns = `repeat(4, 1fr)`;
       panel.appendChild(grid);
 
       family.levels.forEach((lvl) => {
