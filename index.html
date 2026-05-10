@@ -156,7 +156,7 @@
   <div id="title">Choisir une activité</div>
   <div id="hint">Glisser pour tourner · Cliquer pour explorer</div>
   <div id="toast"></div>
-  <div id="version">v0.8.0</div>
+  <div id="version">v0.8.1</div>
   <div id="panel-overlay"></div>
 
   <script type="importmap">
@@ -213,36 +213,99 @@
     })();
 
     // ── DONNÉES NIVEAUX ─────────────────────────────────────────────
-    function makeFamilies(names) {
-      return names.map(name => ({
+    function makeFamily(name, total, unlocked) {
+      return {
         name,
-        levels: [
-          { name: 'Niveau 1', stars: 3, locked: false },
-          { name: 'Niveau 2', stars: 2, locked: false },
-          { name: 'Niveau 3', stars: 1, locked: false },
-          { name: 'Niveau 4', stars: 0, locked: true  },
-          { name: 'Niveau 5', stars: 0, locked: true  },
-          { name: 'Niveau 6', stars: 0, locked: true  },
-        ]
-      }));
+        levels: Array.from({ length: total }, (_, i) => ({
+          name: `Niveau ${i + 1}`,
+          stars:  i < unlocked ? Math.max(0, 3 - i) : 0,
+          locked: i >= unlocked
+        }))
+      };
     }
 
     const FAMILIES_DATA = {
-      'Addition':       makeFamilies(['Nombres entiers', 'Nombres décimaux', 'Grands nombres']),
-      'Multiplication': makeFamilies(['Tables de base', 'Par 10, 100, 1000', 'Décimaux']),
-      'Géométrie':      makeFamilies(['Périmètres', 'Aires', 'Volumes']),
-      'Fractions':      makeFamilies(['Fractions simples', 'Fractions équivalentes', 'Opérations']),
-      'Grammaire':      makeFamilies(['Nom et adjectif', 'Verbe', 'Compléments']),
-      'Conjugaison':    makeFamilies(['Verbes 1er groupe', 'Verbes 2ème groupe', 'Verbes 3ème groupe']),
-      'Lecture':        makeFamilies(['Compréhension', 'Inférence', 'Vocabulaire']),
-      'Dictée':         makeFamilies(['Mots courants', 'Accords', 'Homophones']),
-      'Vocabulaire':    makeFamilies(['Thèmes du quotidien', 'Famille et amis', 'École']),
-      'Écoute':         makeFamilies(['Dialogues simples', 'Histoire courte', 'Instructions']),
-      'Expression':     makeFamilies(['Se présenter', 'Décrire', 'Raconter']),
-      'Capitales':      makeFamilies(['Europe', 'Amériques', 'Asie & Océanie']),
-      'Drapeaux':       makeFamilies(['Europe', 'Afrique', 'Monde']),
-      'Continents':     makeFamilies(['Localisation', 'Pays et frontières', 'Reliefs majeurs']),
-      'Reliefs':        makeFamilies(['Montagnes', 'Fleuves', 'Océans et mers']),
+      // ── Mathématiques (3 jeux) ──
+      'Addition': [
+        makeFamily('Nombres entiers',    6,  4),
+        makeFamily('Nombres décimaux',   9,  2),
+        makeFamily('Grands nombres',     4,  4),
+        makeFamily('Additions à trous', 12,  1),
+      ],
+      'Multiplication': [
+        makeFamily('Tables de base',     16, 8),
+        makeFamily('Par 10, 100, 1000',   3, 3),
+      ],
+      'Géométrie': [
+        makeFamily('Périmètres',  5, 3),
+        makeFamily('Aires',       8, 1),
+        makeFamily('Volumes',     3, 0),
+      ],
+      // ── Français (4 jeux) ──
+      'Grammaire': [
+        makeFamily('Nom et adjectif',  7, 5),
+        makeFamily('Verbe',           10, 3),
+        makeFamily('Compléments',      4, 2),
+      ],
+      'Conjugaison': [
+        makeFamily('Présent',       14, 10),
+        makeFamily('Passé composé',  8,  4),
+        makeFamily('Futur',          5,  2),
+        makeFamily('Imparfait',      6,  1),
+        makeFamily('Subjonctif',     9,  0),
+        makeFamily('Conditionnel',   3,  0),
+      ],
+      'Lecture': [
+        makeFamily('Compréhension', 12, 6),
+        makeFamily('Inférence',      7, 2),
+      ],
+      'Dictée': [
+        makeFamily('Mots courants', 16, 12),
+        makeFamily('Accords',        9,  3),
+        makeFamily('Homophones',     6,  1),
+        makeFamily('Ponctuation',    3,  0),
+      ],
+      // ── Anglais (6 jeux) ──
+      'Vocabulary': [
+        makeFamily('Daily life',  8, 6),
+        makeFamily('Family',      5, 5),
+        makeFamily('School',      6, 3),
+        makeFamily('Nature',      4, 1),
+      ],
+      'Grammar': [
+        makeFamily('Present tense', 10, 7),
+        makeFamily('Past tense',     8, 2),
+        makeFamily('Questions',      6, 1),
+      ],
+      'Listening': [
+        makeFamily('Short dialogues', 5, 4),
+        makeFamily('Stories',         9, 2),
+        makeFamily('Instructions',    4, 4),
+        makeFamily('Songs',           6, 1),
+        makeFamily('Descriptions',    3, 0),
+      ],
+      'Speaking': [
+        makeFamily('Introduce yourself', 4, 4),
+        makeFamily('Describe',           7, 2),
+        makeFamily('Tell a story',       5, 0),
+      ],
+      'Reading': [
+        makeFamily('Simple texts',   8, 6),
+        makeFamily('Short stories', 11, 2),
+      ],
+      'Writing': [
+        makeFamily('Sentences',     6, 5),
+        makeFamily('Paragraphs',    8, 1),
+        makeFamily('Short essays',  3, 0),
+      ],
+      // ── Géographie (1 jeu) ──
+      'Capitales': [
+        makeFamily('Europe',    16, 10),
+        makeFamily('Amériques', 10,  4),
+        makeFamily('Asie',      12,  2),
+        makeFamily('Afrique',    8,  0),
+        makeFamily('Océanie',    4,  0),
+      ],
     };
 
     const texLoader = new THREE.TextureLoader();
@@ -253,7 +316,7 @@
         name: 'Mathématiques',
         color: 0x4488ff, emissive: 0x0a1a3a,
         makeGeo: () => new THREE.SphereGeometry(0.72, 32, 32),
-        games: ['Addition', 'Multiplication', 'Géométrie', 'Fractions']
+        games: ['Addition', 'Multiplication', 'Géométrie']
       },
       {
         name: 'Français',
@@ -266,13 +329,13 @@
         name: 'Anglais',
         color: 0x33ffaa, emissive: 0x0a3a22,
         makeGeo: () => new THREE.SphereGeometry(0.72, 32, 32),
-        games: ['Vocabulaire', 'Grammaire', 'Écoute', 'Expression']
+        games: ['Vocabulary', 'Grammar', 'Listening', 'Speaking', 'Reading', 'Writing']
       },
       {
         name: 'Géographie',
         color: 0xffaa33, emissive: 0x3a2200,
         makeGeo: () => new THREE.SphereGeometry(0.72, 32, 32),
-        games: ['Capitales', 'Drapeaux', 'Continents', 'Reliefs']
+        games: ['Capitales']
       }
     ];
 
@@ -449,7 +512,9 @@
           ctx.lineTo((TW - 32) * S, 66 * S);
           ctx.stroke();
 
-          const cols = 3, rows = 2;
+          const n    = family.levels.length;
+          const cols = n <= 9 ? 3 : 4;
+          const rows = Math.ceil(n / cols);
           const pad  = 14 * S, gap = 8 * S;
           const cw   = (TW * S - pad * 2 - (cols - 1) * gap) / cols;
           const ch   = ((TH - 82) * S - (rows - 1) * gap) / rows;
@@ -513,8 +578,10 @@
           sep.style.borderTopColor = `rgba(${rgb},0.35)`;
           panel.appendChild(sep);
 
+          const cols = family.levels.length <= 9 ? 3 : 4;
           const grid = document.createElement('div');
           grid.className = 'family-panel-grid';
+          grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
           panel.appendChild(grid);
 
           family.levels.forEach((lvl, i) => {
