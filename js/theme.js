@@ -1,3 +1,13 @@
+// Paramètres de balance couleurs — ajustables via l'outil debug (touche D)
+export const TUNE = {
+  bgMult:    0.18,   // multiplicateur R,G du fond (bgFrom)
+  bgBMult:   0.28,   // multiplicateur B du fond
+  bgAlpha:   0.96,   // alpha du fond
+  cardMult:  0.22,   // multiplicateur R,G des cartes niveaux
+  cardBMult: 0.36,   // multiplicateur B des cartes niveaux
+  cardAlpha: 0.85,   // alpha des cartes niveaux
+};
+
 export const THEME = {
   panelW:      960,
   panelH:      540,

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { THEME } from './theme.js';
+import { THEME, TUNE } from './theme.js';
 
 export function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -25,9 +25,9 @@ export function buildFamilyPanel(family, actColor) {
     titleColor:         `rgba(${rgb},0.95)`,
     sepColor:           `rgba(${rgb},0.35)`,
     borderColor:        `rgba(${rgb},0.40)`,
-    cardBgUnlocked:     `rgba(${Math.round(r*0.22)},${Math.round(g*0.22)},${Math.round(b*0.36)},0.85)`,
+    cardBgUnlocked:     `rgba(${Math.round(r*TUNE.cardMult)},${Math.round(g*TUNE.cardMult)},${Math.round(b*TUNE.cardBMult)},${TUNE.cardAlpha})`,
     cardBorderUnlocked: `rgba(${rgb},0.40)`,
-    bgFrom:             `rgba(${Math.round(r*0.18)},${Math.round(g*0.18)},${Math.round(b*0.28)},0.96)`,
+    bgFrom:             `rgba(${Math.round(r*TUNE.bgMult)},${Math.round(g*TUNE.bgMult)},${Math.round(b*TUNE.bgBMult)},${TUNE.bgAlpha})`,
     bgTo:               `rgba(6,8,20,0.96)`,
   };
 
