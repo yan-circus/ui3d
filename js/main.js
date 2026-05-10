@@ -841,6 +841,11 @@ function animate() {
 animate();
 canvas.style.cursor = 'grab';
 
+// ── TUNE live-reload ─────────────────────────────────────────────
+window.addEventListener('tune-changed', () => {
+  if (state === 'prism-zoom' && frontFace) showPanelOverlay(frontFace);
+});
+
 // ── RESIZE ───────────────────────────────────────────────────────
 window.addEventListener('resize', () => {
   camera.aspect = W() / H();
