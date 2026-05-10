@@ -1,12 +1,12 @@
 // Paramètres de balance couleurs — ajustables via l'outil debug (touche D)
 export const TUNE = {
-  brightness: 1.0,   // luminosité globale (multiplie les RGB du fond et des cartes)
-  bgMult:    0.18,   // multiplicateur R,G du fond (bgFrom)
-  bgBMult:   0.28,   // multiplicateur B du fond
-  bgAlpha:   0.96,   // alpha du fond
-  cardMult:  0.22,   // multiplicateur R,G des cartes niveaux
-  cardBMult: 0.36,   // multiplicateur B des cartes niveaux
-  cardAlpha: 0.85,   // alpha des cartes niveaux
+  brightness: 2.60,  // luminosité globale (multiplie les RGB du fond et des cartes)
+  bgMult:    0.165,  // multiplicateur R,G du fond (bgFrom)
+  bgBMult:   0.290,  // multiplicateur B du fond
+  bgAlpha:   0.92,   // alpha du fond
+  cardMult:  0.195,  // multiplicateur R,G des cartes niveaux
+  cardBMult: 0.380,  // multiplicateur B des cartes niveaux
+  cardAlpha: 0.67,   // alpha des cartes niveaux
 };
 
 export const THEME = {

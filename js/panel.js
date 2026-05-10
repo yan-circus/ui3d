@@ -21,15 +21,19 @@ export function buildFamilyPanel(family, actColor) {
   const b   =  actColor        & 0xff;
   const rgb = `${r},${g},${b}`;
 
-  const lum = v => Math.min(255, Math.round(v * TUNE.brightness));
+  const lum  = v  => Math.min(255, Math.round(v  * TUNE.brightness));
+  const lumA = op => Math.min(1,   op * TUNE.brightness);
   const colors = {
-    titleColor:         `rgba(${rgb},0.95)`,
-    sepColor:           `rgba(${rgb},0.35)`,
-    borderColor:        `rgba(${rgb},0.40)`,
+    titleColor:         `rgba(${lum(r)},${lum(g)},${lum(b)},0.95)`,
+    sepColor:           `rgba(${lum(r)},${lum(g)},${lum(b)},0.35)`,
+    borderColor:        `rgba(${lum(r)},${lum(g)},${lum(b)},0.40)`,
     cardBgUnlocked:     `rgba(${lum(r*TUNE.cardMult)},${lum(g*TUNE.cardMult)},${lum(b*TUNE.cardBMult)},${TUNE.cardAlpha})`,
-    cardBorderUnlocked: `rgba(${rgb},0.40)`,
+    cardBorderUnlocked: `rgba(${lum(r)},${lum(g)},${lum(b)},0.40)`,
     bgFrom:             `rgba(${lum(r*TUNE.bgMult)},${lum(g*TUNE.bgMult)},${lum(b*TUNE.bgBMult)},${TUNE.bgAlpha})`,
     bgTo:               `rgba(6,8,20,0.96)`,
+    cardBgLocked:       `rgba(255,255,255,${lumA(0.04).toFixed(3)})`,
+    cardBorderLocked:   `rgba(255,255,255,${lumA(0.07).toFixed(3)})`,
+    lockIconOpacity:    lumA(0.35).toFixed(3),
   };
 
   const T     = THEME;
@@ -86,11 +90,11 @@ export function buildFamilyPanel(family, actColor) {
         const cy  = (gridY  + row * (ch + T.gap)) * K;
         const cws = cw * K, chs = ch * K;
 
-        ctx.fillStyle = lvl.locked ? 'rgba(255,255,255,0.04)' : colors.cardBgUnlocked;
+        ctx.fillStyle = lvl.locked ? colors.cardBgLocked : colors.cardBgUnlocked;
         roundRect(ctx, cx, cy, cws, chs, T.cardRadius * K);
         ctx.fill();
 
-        ctx.strokeStyle = lvl.locked ? 'rgba(255,255,255,0.07)' : colors.cardBorderUnlocked;
+        ctx.strokeStyle = lvl.locked ? colors.cardBorderLocked : colors.cardBorderUnlocked;
         ctx.lineWidth = K;
         roundRect(ctx, cx, cy, cws, chs, T.cardRadius * K);
         ctx.stroke();
@@ -98,7 +102,7 @@ export function buildFamilyPanel(family, actColor) {
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         if (lvl.locked) {
           ctx.font = `${T.starsSz * K}px system-ui`;
-          ctx.fillStyle = 'rgba(255,255,255,0.2)';
+          ctx.fillStyle = `rgba(255,255,255,${colors.lockIconOpacity})`;
           ctx.fillText('🔒', cx + cws / 2, cy + chs / 2);
         } else {
           ctx.font = `bold ${T.levelSz * K}px 'Segoe UI', system-ui, sans-serif`;
@@ -144,6 +148,9 @@ export function buildFamilyPanel(family, actColor) {
         if (lvl.locked) {
           btn.innerHTML = '<span class="lock-icon">🔒</span>';
           btn.disabled = true;
+          btn.style.background   = colors.cardBgLocked;
+          btn.style.borderColor  = colors.cardBorderLocked;
+          btn.querySelector('.lock-icon').style.opacity = colors.lockIconOpacity;
         } else {
           const stars = Array(5).fill(0).map((_, si) =>
             `<span class="${si < lvl.stars ? 'star-filled' : 'star-empty'}">★</span>`
