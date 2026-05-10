@@ -21,24 +21,23 @@ export function buildFamilyPanel(family, actColor) {
   const b   =  actColor        & 0xff;
   const rgb = `${r},${g},${b}`;
 
-  const lum  = v  => Math.min(255, Math.round(v  * TUNE.brightness));
-  const lumA = op => Math.min(1,   op * TUNE.brightness);
-
-  // Couleurs canvas : lum() sur fond/cartes uniquement (les lumières 3D brightent le reste)
+  // Couleurs canvas : valeurs fixes — le carrousel n'est jamais affecté par TUNE
   const colorsCanvas = {
     titleColor:         `rgba(${rgb},0.95)`,
     sepColor:           `rgba(${rgb},0.35)`,
     borderColor:        `rgba(${rgb},0.40)`,
-    cardBgUnlocked:     `rgba(${lum(r*TUNE.cardMult)},${lum(g*TUNE.cardMult)},${lum(b*TUNE.cardBMult)},${TUNE.cardAlpha})`,
+    cardBgUnlocked:     `rgba(${Math.round(r*0.22)},${Math.round(g*0.22)},${Math.round(b*0.36)},0.85)`,
     cardBorderUnlocked: `rgba(${rgb},0.40)`,
-    bgFrom:             `rgba(${lum(r*TUNE.bgMult)},${lum(g*TUNE.bgMult)},${lum(b*TUNE.bgBMult)},${TUNE.bgAlpha})`,
+    bgFrom:             `rgba(${Math.round(r*0.18)},${Math.round(g*0.18)},${Math.round(b*0.28)},0.96)`,
     bgTo:               `rgba(6,8,20,0.96)`,
     cardBgLocked:       `rgba(255,255,255,0.04)`,
     cardBorderLocked:   `rgba(255,255,255,0.07)`,
     lockIconOpacity:    '0.35',
   };
 
-  // Couleurs HTML : lum() sur tout pour simuler l'éclairage 3D
+  // Couleurs HTML : pilotées par TUNE — seul l'outil debug (D) les modifie
+  const lum  = v  => Math.min(255, Math.round(v  * TUNE.brightness));
+  const lumA = op => Math.min(1,   op * TUNE.brightness);
   const colorsHTML = {
     titleColor:         `rgba(${lum(r)},${lum(g)},${lum(b)},0.95)`,
     sepColor:           `rgba(${lum(r)},${lum(g)},${lum(b)},0.35)`,
