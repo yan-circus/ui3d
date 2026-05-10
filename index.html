@@ -127,7 +127,7 @@
       overflow-y: auto;
       flex: 1;
       align-content: start;
-      padding: 4px 24px 4px 4px;
+      padding: var(--grid-pad-top) var(--grid-pad-right) var(--grid-pad-top) var(--grid-pad-top);
     }
 
     .family-panel-grid::-webkit-scrollbar { width: 4px; }
@@ -137,14 +137,14 @@
     .level-card {
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      gap: 8px;
-      padding: 18px 12px;
+      gap: var(--card-gap);
+      padding: var(--card-pad-v) var(--card-pad-h);
       border-radius: var(--card-radius);
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.08);
       cursor: default; font-family: inherit;
       transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
-      min-height: 100px;
+      min-height: var(--card-min-h);
     }
 
     .level-card:not(.locked) { cursor: pointer; }

@@ -40,7 +40,7 @@ export function buildFamilyPanel(family, actColor) {
   return {
     toTexture() {
       const TW = 640, TH = 360, CS = 2;
-      const K  = (TW * CS) / 960;   // 4/3 — converts logical 960-space to canvas pixels
+      const K  = (TW * CS) / T.panelW;   // converts logical panelW-space to canvas pixels
       const cv = document.createElement('canvas');
       cv.width = TW * CS; cv.height = TH * CS;
       const ctx = cv.getContext('2d');
@@ -67,12 +67,12 @@ export function buildFamilyPanel(family, actColor) {
       ctx.lineWidth = K;
       ctx.beginPath();
       ctx.moveTo(T.padH * K, sepY * K);
-      ctx.lineTo((960 - T.padH) * K, sepY * K);
+      ctx.lineTo((T.panelW - T.padH) * K, sepY * K);
       ctx.stroke();
 
       const rows   = Math.ceil(n / cols);
-      const gridW  = 960 - T.padH * 2;
-      const gridHt = 540 - gridY - T.padBot;
+      const gridW  = T.panelW - T.padH * 2;
+      const gridHt = T.panelH - gridY - T.padBot;
       const cw     = (gridW - (cols - 1) * T.gap) / cols;
       const ch     = (gridHt - (rows - 1) * T.gap) / rows;
 
