@@ -1,5 +1,6 @@
 // Paramètres de balance couleurs — ajustables via l'outil debug (touche D)
 export const TUNE = {
+  brightness: 1.0,   // luminosité globale (multiplie les RGB du fond et des cartes)
   bgMult:    0.18,   // multiplicateur R,G du fond (bgFrom)
   bgBMult:   0.28,   // multiplicateur B du fond
   bgAlpha:   0.96,   // alpha du fond

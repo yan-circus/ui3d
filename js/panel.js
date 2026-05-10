@@ -21,13 +21,14 @@ export function buildFamilyPanel(family, actColor) {
   const b   =  actColor        & 0xff;
   const rgb = `${r},${g},${b}`;
 
+  const lum = v => Math.min(255, Math.round(v * TUNE.brightness));
   const colors = {
     titleColor:         `rgba(${rgb},0.95)`,
     sepColor:           `rgba(${rgb},0.35)`,
     borderColor:        `rgba(${rgb},0.40)`,
-    cardBgUnlocked:     `rgba(${Math.round(r*TUNE.cardMult)},${Math.round(g*TUNE.cardMult)},${Math.round(b*TUNE.cardBMult)},${TUNE.cardAlpha})`,
+    cardBgUnlocked:     `rgba(${lum(r*TUNE.cardMult)},${lum(g*TUNE.cardMult)},${lum(b*TUNE.cardBMult)},${TUNE.cardAlpha})`,
     cardBorderUnlocked: `rgba(${rgb},0.40)`,
-    bgFrom:             `rgba(${Math.round(r*TUNE.bgMult)},${Math.round(g*TUNE.bgMult)},${Math.round(b*TUNE.bgBMult)},${TUNE.bgAlpha})`,
+    bgFrom:             `rgba(${lum(r*TUNE.bgMult)},${lum(g*TUNE.bgMult)},${lum(b*TUNE.bgBMult)},${TUNE.bgAlpha})`,
     bgTo:               `rgba(6,8,20,0.96)`,
   };
 

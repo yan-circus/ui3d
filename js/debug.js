@@ -1,12 +1,13 @@
 import { TUNE } from './theme.js';
 
 const SLIDERS = [
-  { key: 'bgMult',    label: 'Fond R,G',     min: 0,   max: 0.5, step: 0.005, fmt: v => v.toFixed(3) },
-  { key: 'bgBMult',   label: 'Fond B',       min: 0,   max: 0.5, step: 0.005, fmt: v => v.toFixed(3) },
-  { key: 'bgAlpha',   label: 'Fond alpha',   min: 0.5, max: 1,   step: 0.01,  fmt: v => v.toFixed(2) },
-  { key: 'cardMult',  label: 'Carte R,G',    min: 0,   max: 0.5, step: 0.005, fmt: v => v.toFixed(3) },
-  { key: 'cardBMult', label: 'Carte B',      min: 0,   max: 0.5, step: 0.005, fmt: v => v.toFixed(3) },
-  { key: 'cardAlpha', label: 'Carte alpha',  min: 0.5, max: 1,   step: 0.01,  fmt: v => v.toFixed(2) },
+  { key: 'brightness', label: 'Luminosité',   min: 0.5, max: 5,   step: 0.05,  fmt: v => v.toFixed(2) },
+  { key: 'bgMult',     label: 'Fond R,G',     min: 0,   max: 0.5, step: 0.005, fmt: v => v.toFixed(3) },
+  { key: 'bgBMult',    label: 'Fond B',       min: 0,   max: 0.5, step: 0.005, fmt: v => v.toFixed(3) },
+  { key: 'bgAlpha',    label: 'Fond alpha',   min: 0.5, max: 1,   step: 0.01,  fmt: v => v.toFixed(2) },
+  { key: 'cardMult',   label: 'Carte R,G',    min: 0,   max: 0.5, step: 0.005, fmt: v => v.toFixed(3) },
+  { key: 'cardBMult',  label: 'Carte B',      min: 0,   max: 0.5, step: 0.005, fmt: v => v.toFixed(3) },
+  { key: 'cardAlpha',  label: 'Carte alpha',  min: 0.5, max: 1,   step: 0.01,  fmt: v => v.toFixed(2) },
 ];
 
 // ── Panneau flottant ─────────────────────────────────────────────
