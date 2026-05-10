@@ -23,7 +23,23 @@ export function buildFamilyPanel(family, actColor) {
 
   const lum  = v  => Math.min(255, Math.round(v  * TUNE.brightness));
   const lumA = op => Math.min(1,   op * TUNE.brightness);
-  const colors = {
+
+  // Couleurs canvas : lum() sur fond/cartes uniquement (les lumières 3D brightent le reste)
+  const colorsCanvas = {
+    titleColor:         `rgba(${rgb},0.95)`,
+    sepColor:           `rgba(${rgb},0.35)`,
+    borderColor:        `rgba(${rgb},0.40)`,
+    cardBgUnlocked:     `rgba(${lum(r*TUNE.cardMult)},${lum(g*TUNE.cardMult)},${lum(b*TUNE.cardBMult)},${TUNE.cardAlpha})`,
+    cardBorderUnlocked: `rgba(${rgb},0.40)`,
+    bgFrom:             `rgba(${lum(r*TUNE.bgMult)},${lum(g*TUNE.bgMult)},${lum(b*TUNE.bgBMult)},${TUNE.bgAlpha})`,
+    bgTo:               `rgba(6,8,20,0.96)`,
+    cardBgLocked:       `rgba(255,255,255,0.04)`,
+    cardBorderLocked:   `rgba(255,255,255,0.07)`,
+    lockIconOpacity:    '0.35',
+  };
+
+  // Couleurs HTML : lum() sur tout pour simuler l'éclairage 3D
+  const colorsHTML = {
     titleColor:         `rgba(${lum(r)},${lum(g)},${lum(b)},0.95)`,
     sepColor:           `rgba(${lum(r)},${lum(g)},${lum(b)},0.35)`,
     borderColor:        `rgba(${lum(r)},${lum(g)},${lum(b)},0.40)`,
@@ -44,6 +60,7 @@ export function buildFamilyPanel(family, actColor) {
 
   return {
     toTexture() {
+      const colors = colorsCanvas;
       const TW = 640, TH = 360, CS = 2;
       const K  = (TW * CS) / T.panelW;   // converts logical panelW-space to canvas pixels
       const cv = document.createElement('canvas');
@@ -119,6 +136,7 @@ export function buildFamilyPanel(family, actColor) {
     },
 
     toHTML(onLevelClick) {
+      const colors = colorsHTML;
       const panel = document.createElement('div');
       panel.className = 'family-panel';
       panel.style.cssText = `
