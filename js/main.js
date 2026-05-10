@@ -593,7 +593,7 @@ function toPrism(gameName) {
   tween(440, t => {
     camDist = startDist + (PRISM_CAM_DIST - startDist) * t;
     gameSats.forEach(m => { m.material.opacity = 0.5 * (1 - t); });
-    prismFaces.forEach(m => { m.material.opacity = t * 0.65; });
+    prismFaces.forEach(m => { m.material.opacity = t * 0.85; });
   }, () => {
     actGroup.visible = false;
     state = 'prism';
@@ -664,7 +664,7 @@ function zoomOutFace() {
     camDist = startDist + (PRISM_CAM_DIST - startDist) * t;
     camPhi  = startPhi  + (30 * Math.PI / 180 - startPhi) * t;
     prismFaces.forEach(m => {
-      const target = (m === currentFace) ? 1.0 : 0.65;
+      const target = (m === currentFace) ? 1.0 : 0.72;
       m.material.opacity += (target - m.material.opacity) * 0.1;
     });
   }, () => {
@@ -807,7 +807,7 @@ function animate() {
   // Faces du prisme
   if (state === 'prism' && prismFaces.length) {
     prismFaces.forEach(m => {
-      const target = (m === frontFace) ? 1.0 : 0.65;
+      const target = (m === frontFace) ? 1.0 : 0.72;
       m.material.opacity += (target - m.material.opacity) * 0.07;
     });
   }

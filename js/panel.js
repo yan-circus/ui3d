@@ -59,9 +59,11 @@ export function buildFamilyPanel(family, actColor) {
 
       ctx.fillStyle = colors.titleColor;
       ctx.font = `bold ${T.titleSz * K}px 'Segoe UI', system-ui, sans-serif`;
+      ctx.letterSpacing = (T.titleLS * K) + 'px';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(family.name.toUpperCase(), TW * CS / 2, (T.padTop + T.titleSz / 2) * K);
+      ctx.letterSpacing = '0px';
 
       ctx.strokeStyle = colors.sepColor;
       ctx.lineWidth = K;
