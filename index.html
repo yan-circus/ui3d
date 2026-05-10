@@ -156,7 +156,7 @@
   <div id="title">Choisir une activité</div>
   <div id="hint">Glisser pour tourner · Cliquer pour explorer</div>
   <div id="toast"></div>
-  <div id="version">v0.8.1</div>
+  <div id="version">v0.8.2</div>
   <div id="panel-overlay"></div>
 
   <script type="importmap">
@@ -378,6 +378,8 @@
     // ── SCÈNE ACCUEIL ───────────────────────────────────────────────
     const homeRing = addOrbitRing(HOME_R, homeGroup);
 
+    const homeGems = []; // mini gemmes décoratives autour des sphères activité
+
     const homeSats = ACTIVITIES.map((act, i) => {
       const angle = (i / ACTIVITIES.length) * Math.PI * 2;
       const mesh  = new THREE.Mesh(act.makeGeo(), makeMat(act.color, act.emissive));
@@ -399,6 +401,22 @@
 
       homeGroup.add(mesh);
       return mesh;
+    });
+
+    // Mini gemmes décoratives (une par jeu, orbite locale autour de chaque sphère)
+    ACTIVITIES.forEach((act, i) => {
+      const actAngle = (i / ACTIVITIES.length) * Math.PI * 2;
+      const ax = Math.cos(actAngle) * HOME_R;
+      const az = Math.sin(actAngle) * HOME_R;
+      act.games.forEach((_, j) => {
+        const m = new THREE.Mesh(
+          new THREE.OctahedronGeometry(0.13, 0),
+          makeMat(act.color, act.emissive, { opacity: 0, roughness: 0.06, metalness: 0.05 })
+        );
+        m.scale.y = 1.56;
+        homeGroup.add(m);
+        homeGems.push({ mesh: m, actIdx: i, gemIdx: j, ax, az });
+      });
     });
 
     // ── SCÈNE ACTIVITÉ ──────────────────────────────────────────────
@@ -1133,6 +1151,21 @@
         });
         prevFrontSat = null;
       }
+
+      // Mini gemmes accueil
+      homeGems.forEach(({ mesh, actIdx, gemIdx, ax, az }) => {
+        const n           = ACTIVITIES[actIdx].games.length;
+        const orbitAngle  = (gemIdx / n) * Math.PI * 2 + t * 0.4;
+        const r           = 1.15;
+        mesh.position.set(
+          ax + Math.cos(orbitAngle) * r,
+          Math.sin(t * 0.9 + gemIdx * 1.3) * 0.13,
+          az + Math.sin(orbitAngle) * r
+        );
+        mesh.rotation.y = t * 0.6;
+        const targetOp = homeSats[actIdx].material.opacity * 0.55;
+        mesh.material.opacity += (targetOp - mesh.material.opacity) * 0.08;
+      });
 
       // Accueil
       homeSats.forEach((m, i) => {
