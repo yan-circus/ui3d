@@ -166,7 +166,7 @@
   <div id="title">Choisir une activité</div>
   <div id="hint">Glisser pour tourner · Cliquer pour explorer</div>
   <div id="toast"></div>
-  <div id="version">v0.8.5</div>
+  <div id="version">v0.8.6</div>
   <div id="panel-overlay"></div>
 
   <script type="importmap">
@@ -507,83 +507,109 @@
       const b   =  actColor        & 0xff;
       const rgb = `${r},${g},${b}`;
 
+      // ── Styles partagés — espace logique 960×540 ──────────────────
+      const ST = {
+        padH:        44,    // padding horizontal
+        padTop:      36,    // padding haut
+        padBot:      32,    // padding bas
+        gap:         12,    // gap grille
+        titleSz:     18,    // taille police titre
+        titleLS:      5,    // letter-spacing titre
+        levelSz:     13,    // taille "Niveau X"
+        starsSz:     14,    // taille étoiles
+        sepMargin:   14,    // marge titre → séparateur
+        gridMargin:  14,    // marge séparateur → grille
+        cardRadius:  12,    // border-radius carte
+        panelRadius: 20,    // border-radius panneau
+        titleColor:  `rgba(${rgb},0.95)`,
+        sepColor:    `rgba(${rgb},0.35)`,
+        borderColor: `rgba(${rgb},0.40)`,
+        cardBgUnlocked: `rgba(${Math.round(r*0.22)},${Math.round(g*0.22)},${Math.round(b*0.36)},0.85)`,
+        cardBorderUnlocked: `rgba(${rgb},0.40)`,
+        bgFrom: `rgba(${Math.round(r*0.18)},${Math.round(g*0.18)},${Math.round(b*0.28)},0.96)`,
+        bgTo:   `rgba(6,8,20,0.96)`,
+      };
+      const sepY  = ST.padTop + ST.titleSz + ST.sepMargin;   // ~68
+      const gridY = sepY + 1 + ST.gridMargin;                // ~83
+
+      // Colonnes communes
+      const n    = family.levels.length;
+      const cols = n <= 4 ? 2 : 4;
+
       return {
         toTexture() {
-          // Ratio 16:9 pour correspondre au panneau HTML 960×540
-          const TW = 640, TH = 360, S = 2;
-          const cv  = document.createElement('canvas');
-          cv.width  = TW * S; cv.height = TH * S;
+          // Canvas 640×360 @×2 = 1280×720. Facteur K : 960→1280
+          const TW = 640, TH = 360, CS = 2;
+          const K  = (TW * CS) / 960;  // 4/3
+          const cv = document.createElement('canvas');
+          cv.width = TW * CS; cv.height = TH * CS;
           const ctx = cv.getContext('2d');
 
-          // Fond dégradé
-          const grad = ctx.createLinearGradient(0, 0, 0, TH * S);
-          grad.addColorStop(0, `rgb(${Math.round(r*0.18)},${Math.round(g*0.18)},${Math.round(b*0.28)})`);
-          grad.addColorStop(1, 'rgb(6,8,20)');
+          // Fond
+          const grad = ctx.createLinearGradient(0, 0, 0, TH * CS);
+          grad.addColorStop(0, ST.bgFrom);
+          grad.addColorStop(1, ST.bgTo);
           ctx.fillStyle = grad;
-          roundRect(ctx, 0, 0, TW * S, TH * S, 16 * S);
+          roundRect(ctx, 0, 0, TW * CS, TH * CS, ST.panelRadius * K);
           ctx.fill();
 
           // Bordure
-          ctx.strokeStyle = `rgba(${rgb},0.4)`;
-          ctx.lineWidth = 2 * S;
-          roundRect(ctx, S, S, (TW - 2) * S, (TH - 2) * S, 15 * S);
+          ctx.strokeStyle = ST.borderColor;
+          ctx.lineWidth = K;
+          roundRect(ctx, K * 0.5, K * 0.5, TW * CS - K, TH * CS - K, (ST.panelRadius - 0.5) * K);
           ctx.stroke();
 
           // Titre
-          ctx.fillStyle = 'rgba(255,255,255,0.9)';
-          ctx.font = `bold ${11 * S}px 'Segoe UI', system-ui, sans-serif`;
+          ctx.fillStyle = ST.titleColor;
+          ctx.font = `bold ${ST.titleSz * K}px 'Segoe UI', system-ui, sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(family.name.toUpperCase(), TW * S / 2, 22 * S);
+          ctx.fillText(family.name.toUpperCase(), TW * CS / 2, (ST.padTop + ST.titleSz / 2) * K);
 
           // Séparateur
-          ctx.strokeStyle = `rgba(${rgb},0.35)`;
-          ctx.lineWidth = S;
+          ctx.strokeStyle = ST.sepColor;
+          ctx.lineWidth = K;
           ctx.beginPath();
-          ctx.moveTo(24 * S, 36 * S);
-          ctx.lineTo((TW - 24) * S, 36 * S);
+          ctx.moveTo(ST.padH * K, sepY * K);
+          ctx.lineTo((960 - ST.padH) * K, sepY * K);
           ctx.stroke();
 
-          // Grille de niveaux
-          const n    = family.levels.length;
-          const cols = n <= 4 ? 2 : 4;
-          const rows = Math.ceil(n / cols);
-          const pad  = 16 * S, gap = 6 * S;
-          const cw   = (TW * S - pad * 2 - (cols - 1) * gap) / cols;
-          const ch   = ((TH - 44) * S - (rows - 1) * gap) / rows;
+          // Grille
+          const rows   = Math.ceil(n / cols);
+          const gridW  = 960 - ST.padH * 2;
+          const gridHt = 540 - gridY - ST.padBot;
+          const cw     = (gridW - (cols - 1) * ST.gap) / cols;
+          const ch     = (gridHt - (rows - 1) * ST.gap) / rows;
 
           family.levels.forEach((lvl, i) => {
             const col = i % cols;
             const row = Math.floor(i / cols);
-            const cx  = pad + col * (cw + gap);
-            const cy  = 42 * S + row * (ch + gap);
+            const cx  = (ST.padH + col * (cw + ST.gap)) * K;
+            const cy  = (gridY  + row * (ch + ST.gap)) * K;
+            const cws = cw * K, chs = ch * K;
 
-            ctx.fillStyle = lvl.locked
-              ? 'rgba(255,255,255,0.04)'
-              : `rgba(${Math.round(r*0.22)},${Math.round(g*0.22)},${Math.round(b*0.36)},0.85)`;
-            roundRect(ctx, cx, cy, cw, ch, 6 * S);
+            ctx.fillStyle = lvl.locked ? 'rgba(255,255,255,0.04)' : ST.cardBgUnlocked;
+            roundRect(ctx, cx, cy, cws, chs, ST.cardRadius * K);
             ctx.fill();
 
-            ctx.strokeStyle = lvl.locked ? 'rgba(255,255,255,0.07)' : `rgba(${rgb},0.4)`;
-            ctx.lineWidth = S;
-            roundRect(ctx, cx, cy, cw, ch, 6 * S);
+            ctx.strokeStyle = lvl.locked ? 'rgba(255,255,255,0.07)' : ST.cardBorderUnlocked;
+            ctx.lineWidth = K;
+            roundRect(ctx, cx, cy, cws, chs, ST.cardRadius * K);
             ctx.stroke();
 
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             if (lvl.locked) {
-              ctx.font = `${Math.max(10, ch * 0.35)}px system-ui`;
+              ctx.font = `${ST.starsSz * K}px system-ui`;
               ctx.fillStyle = 'rgba(255,255,255,0.2)';
-              ctx.fillText('🔒', cx + cw / 2, cy + ch / 2);
+              ctx.fillText('🔒', cx + cws / 2, cy + chs / 2);
             } else {
-              ctx.font = `bold ${Math.max(8, ch * 0.22)}px 'Segoe UI', system-ui, sans-serif`;
+              ctx.font = `bold ${ST.levelSz * K}px 'Segoe UI', system-ui, sans-serif`;
               ctx.fillStyle = 'rgba(255,255,255,0.92)';
-              ctx.fillText(lvl.name, cx + cw / 2, cy + ch * 0.36);
-              ctx.font = `${Math.max(8, ch * 0.22)}px system-ui`;
+              ctx.fillText(lvl.name, cx + cws / 2, cy + chs * 0.36);
               const stars = Array(5).fill(0).map((_, si) => si < lvl.stars ? '★' : '☆').join('');
+              ctx.font = `${ST.starsSz * K}px system-ui`;
               ctx.fillStyle = lvl.stars > 0 ? '#ffcc44' : 'rgba(255,255,255,0.15)';
-              ctx.fillText(stars, cx + cw / 2, cy + ch * 0.70);
+              ctx.fillText(stars, cx + cws / 2, cy + chs * 0.70);
             }
           });
 
@@ -594,25 +620,21 @@
           const panel = document.createElement('div');
           panel.className = 'family-panel';
           panel.style.cssText = `
-            background: linear-gradient(180deg,
-              rgba(${Math.round(r*0.18)},${Math.round(g*0.18)},${Math.round(b*0.28)},0.96) 0%,
-              rgba(6,8,20,0.96) 100%);
-            border: 1px solid rgba(${rgb},0.4);
+            background: linear-gradient(180deg, ${ST.bgFrom} 0%, ${ST.bgTo} 100%);
+            border: 1px solid ${ST.borderColor};
           `;
 
           const header = document.createElement('div');
           header.className = 'family-panel-header';
           header.textContent = family.name.toUpperCase();
-          header.style.color = `rgba(${rgb},0.95)`;
+          header.style.color = ST.titleColor;
           panel.appendChild(header);
 
           const sep = document.createElement('div');
           sep.className = 'family-panel-sep';
-          sep.style.borderTopColor = `rgba(${rgb},0.35)`;
+          sep.style.borderTopColor = ST.sepColor;
           panel.appendChild(sep);
 
-          const n    = family.levels.length;
-          const cols = n <= 4 ? 2 : n <= 9 ? 3 : 4;
           const grid = document.createElement('div');
           grid.className = 'family-panel-grid';
           grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
@@ -621,7 +643,6 @@
           family.levels.forEach((lvl, i) => {
             const btn = document.createElement('button');
             btn.className = 'level-card' + (lvl.locked ? ' locked' : '');
-
             if (lvl.locked) {
               btn.innerHTML = '<span class="lock-icon">🔒</span>';
               btn.disabled = true;
@@ -631,12 +652,11 @@
               ).join('');
               btn.innerHTML = `<span class="level-name">${lvl.name}</span><span class="level-stars">${stars}</span>`;
               btn.style.cssText = `
-                background: rgba(${Math.round(r*0.25)},${Math.round(g*0.25)},${Math.round(b*0.4)},0.85);
-                border-color: rgba(${rgb},0.45);
+                background: ${ST.cardBgUnlocked};
+                border-color: ${ST.cardBorderUnlocked};
               `;
               btn.addEventListener('click', e => { e.stopPropagation(); onLevelClick(lvl.name, i); });
             }
-
             grid.appendChild(btn);
           });
 
